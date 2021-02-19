@@ -15,7 +15,10 @@ const getAll = () => {
 //Luodaan uusi blogi
 //Async/await-syntaksi asettaa moduulin tallessa pitämän 
 //tokenin Authorization-headeriin, jonka se antaa axiosille metodin post kolmantena parametrina
-const create = async newObject => {
+const createBlog = async newObject => {
+  //Token otetaan yllä olevasta apumuuttujasta, jonka arvo saadaan
+  //kirjautumisen yhteydessä
+  //lisätään kirjautuneen käyttäjän token HTTP-pyynnön Authorization-headeriin
   const config = {
     headers: { Authorization: token },
   }
@@ -23,4 +26,4 @@ const create = async newObject => {
   return response.data
 }
 
-export default { getAll, create, setToken }
+export default { getAll, createBlog, setToken }

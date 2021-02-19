@@ -25,16 +25,21 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
+  //Uuden blogin luomiseen liittyvien kenttien ylläpitoon
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
 
-  //Effect hook hakemaan kaikki blogit kun sivu ladataan/uudelleen ladataan
+
+  //Effect hook hakemaan kaikki blogit kun sivu ladataan
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
     )
+
   }, [])
 
-  console.log(blogs.map(blog => blog.user.id))
-  console.log(user)
+
   //Effect hook hakemaan locla storagesta loggautuneen käyttäjän tiedot
   //ettei pyydä sivun uudelleen latauksen yhteydessä uudelleen kirjautumaan
   //Efektin lopuussa parametrina oleva tyhjä taulukko "[]" varmistaa sen, että efekti suoritetaan 
@@ -67,6 +72,8 @@ const App = () => {
       )
 
       console.log('LOGGAUTUNUT KÄYTTÄJÄ', user)
+      //Lisätään käyttäjän token saataville "services/blogs.js" fileen
+      //missä mm. tehdään http post pyyntö palvelimelle uuden blogin lisäämiseksi
       blogService.setToken(user.token)
       setUser(user)
       //Nollataan kirjautumislomakkeen kentät, kun login nappia painettu
@@ -74,7 +81,7 @@ const App = () => {
       setPassword('')
 
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setErrorMessage('Wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -126,24 +133,98 @@ const App = () => {
   //----------------------- LOGOUT JA LOGIN LOPPUU-----------------------------------
 
   //-----------------UUDEN BLOGIN LUOMINEN-------------------------------------------
+
+  //Title kentän muutoksien hallintaan
+  const handleTitleChange = (event) => {
+    //Tapahtumaolion kenttä target vastaa kontrolloitua input-kenttää.
+    //event.target.value viittaa inputin syötekentän arvoon
+    console.log(event.target.value.toLowerCase())
+    //Täydennetään uutta titteliä sitä mukaan kuin kenttään kirjoitetaan
+    setNewTitle(event.target.value)
+  }
+
+  //Author kentän muutoksien hallintaan
+  const handleAuthorChange = (event) => {
+    //Tapahtumaolion kenttä target vastaa kontrolloitua input-kenttää.
+    //event.target.value viittaa inputin syötekentän arvoon
+    console.log(event.target.value.toLowerCase())
+    //Täydennetään uutta titteliä sitä mukaan kuin kenttään kirjoitetaan
+    setNewAuthor(event.target.value)
+  }
+  //Url kentän muutoksien hallintaan
+  const handleUrlChange = (event) => {
+    //Tapahtumaolion kenttä target vastaa kontrolloitua input-kenttää.
+    //event.target.value viittaa inputin syötekentän arvoon
+    console.log(event.target.value.toLowerCase())
+    //Täydennetään uutta titteliä sitä mukaan kuin kenttään kirjoitetaan
+    setNewUrl(event.target.value)
+  }
+
+  const addBlog = async (event) => {
+    //Estää lomakkeen lähetyksen oletusarvoisen toiminnan, 
+    //joka aiheuttaisi mm. sivun uudelleenlatautumisen. 
+    event.preventDefault()
+    console.log('UUSI BLOGI ON SYNTYMÄSSÄ')
+
+    //Luodaan uusi blogi object
+    //token on jo saatavilla "services/blogs.js" filessä, koska token
+    //meni sinne local storage effect hookin kautta
+
+    const blogObject = {
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl
+    }
+
+    //Viedään käyttäjän token "services/blogs" fileen, jossa uuden blogin
+    blogService.setToken(user.token)
+
+    try {
+      //Luodaan blogi kantaan HUOM! async/await
+      await blogService.createBlog(blogObject)
+      
+      //Haetaan kaikki blogit kannasta uuden lisäyksen jälkeen
+      //HUOM! async/await
+      const blogsAfterAdd = await blogService.getAll()
+      
+      //Päivitetään näytettävää blogilistaa sis. uuden blogin
+      setBlogs(blogsAfterAdd.map(blog => blog))
+
+      //Onnistuneesta lisäyksestä selaimeen viesti 5 sec
+      setErrorMessage('Blog successfully added')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    } catch (exception) {
+      setErrorMessage('Jokin meni pieleen')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+    setNewTitle('')
+    setNewAuthor('')
+    setNewUrl('')
+  }
   //Uuden blogin luomiseen renderöity formi
   const blogForm = () => (
-    /*
-    <form onSubmit={addBlog}>
-      <input
-        value={newBlog}
-        onChange={handleBlogChange}
-      />
-      <button type="submit">save</button>
-    </form>
-    */
-    <div>
-      HIENOA LOGGAUDUIT!!
-    </div>
+    < div >
+      <h2>CREATE NEW</h2>
+      <form onSubmit={addBlog}>
+        <div>
+          Title: <input value={newTitle} onChange={handleTitleChange} />
+        </div>
+        <div>
+          Author: <input value={newAuthor} onChange={handleAuthorChange} />
+        </div>
+        <div>
+          Url: <input value={newUrl} onChange={handleUrlChange} />
+        </div>
+        <br></br>
+        <button type="submit">create</button>
+      </form>
+    </div >
   )
   //-----------------UUDEN BLOGIN LUOMINEN LOPPUU-------------------------------------------
-
-
 
   return (
     <div>
@@ -155,8 +236,8 @@ const App = () => {
         <div>
           <p>{user.name} logged in {logoutForm()}</p>
           {blogForm()}
-          <h2>YOUR BLOGS</h2>
 
+          <h2>YOUR BLOGS</h2>
           {blogs.filter(blog => blog.user.username === user.username).map(blog =>
             <Blog key={blog.id} blog={blog} />)}
         </div>
