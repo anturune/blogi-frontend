@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import './index.css'
 import blogService from './services/blogs'
 //Login pyyntö 
 import loginService from './services/login'
 
 
-//Tällä muotoillaan notificaatio
+//Tällä muotoillaan notificaatio errorille
+//CSS filestä muotoilua
 const Notification = ({ message }) => {
   if (message === null) {
     return null
@@ -18,13 +20,28 @@ const Notification = ({ message }) => {
   )
 }
 
+const NotificationBlogAdded = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="added">
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   //Tilat usernamelle ja salasanalle
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState('')
+  //Tilat notificaatioille
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [addedMessage, setAddedMessage] = useState(null)
+
   //Uuden blogin luomiseen liittyvien kenttien ylläpitoon
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
@@ -182,19 +199,20 @@ const App = () => {
     try {
       //Luodaan blogi kantaan HUOM! async/await
       await blogService.createBlog(blogObject)
-      
+
       //Haetaan kaikki blogit kannasta uuden lisäyksen jälkeen
       //HUOM! async/await
       const blogsAfterAdd = await blogService.getAll()
-      
+
       //Päivitetään näytettävää blogilistaa sis. uuden blogin
       setBlogs(blogsAfterAdd.map(blog => blog))
 
       //Onnistuneesta lisäyksestä selaimeen viesti 5 sec
-      setErrorMessage('Blog successfully added')
+      setAddedMessage('A new blog ' + `${blogObject.title}` + ' by ' + `${user.name}` + ' successfully added')
       setTimeout(() => {
-        setErrorMessage(null)
+        setAddedMessage(null)
       }, 5000)
+      //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
     } catch (exception) {
       setErrorMessage('Jokin meni pieleen')
       setTimeout(() => {
@@ -230,6 +248,7 @@ const App = () => {
     <div>
 
       <Notification message={errorMessage} />
+      <NotificationBlogAdded message={addedMessage} />
 
       {user === null ?
         loginForm() :
