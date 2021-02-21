@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import './index.css'
 import blogService from './services/blogs'
 //Login pyyntö 
 import loginService from './services/login'
+//Buttonien näkyvyyttä säätelemään
+import Togglable from './components/Togglable'
 
 
 //Tällä muotoillaan notificaatio errorille
@@ -223,6 +226,7 @@ const App = () => {
     setNewAuthor('')
     setNewUrl('')
   }
+  /*
   //Uuden blogin luomiseen renderöity formi
   const blogForm = () => (
     < div >
@@ -243,7 +247,30 @@ const App = () => {
     </div >
   )
   //-----------------UUDEN BLOGIN LUOMINEN LOPPUU-------------------------------------------
+*/
 
+//----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA ALKAA------------
+  //Renderöitävä blogiformi ja tähän liittyvä komponentti
+  //"src/components/blogform", Create Button käyttöön vain halutessa
+  //Ja buttonin nimeksi tulee "new blog" ks. Togglable ja BlogForm komponentit
+  //käytössä on nyt avaava ja sulkeva tagi, joiden sisällä määritellään toinen 
+  //komponentti eli LoginForm
+  //Togglablen avaavan ja sulkevan tagin sisälle voi sijoittaa lapsiksi mitä 
+  //tahansa React-elementtejä
+  const blogForm = () => (
+    <Togglable buttonLabel="new blog">
+      <BlogForm
+        addBlog={addBlog}
+        newTitle={newTitle}
+        handleTitleChange={handleTitleChange}
+        newAuthor={newAuthor}
+        handleAuthorChange={handleAuthorChange}
+        newUrl={newUrl}
+        handleUrlChange={handleUrlChange}
+      />
+    </Togglable>
+  )
+//----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
   return (
     <div>
 
@@ -255,7 +282,6 @@ const App = () => {
         <div>
           <p>{user.name} logged in {logoutForm()}</p>
           {blogForm()}
-
           <h2>YOUR BLOGS</h2>
           {blogs.filter(blog => blog.user.username === user.username).map(blog =>
             <Blog key={blog.id} blog={blog} />)}
