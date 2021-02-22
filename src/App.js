@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import './index.css'
@@ -156,6 +156,9 @@ const App = () => {
     //event.preventDefault()
     console.log('UUSI BLOGI ON SYNTYMÄSSÄ')
 
+    //Piilotetaan luomislomake kutsumalla noteFormRef.current.toggleVisibility() 
+    //samalla kun uuden muistiinpanon luominen tapahtuu
+    blogFormRef.current.toggleVisibility()
 
     //Viedään käyttäjän token "services/blogs" fileen, jossa uuden blogin
     blogService.setToken(user.token)
@@ -185,11 +188,15 @@ const App = () => {
     }
 
   }
-  
+
   //-----------------UUDEN BLOGIN LUOMINEN LOPPUU-------------------------------------------
 
 
   //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA ALKAA------------
+  //useRef hookilla luodaan ref blogFormRef, joka kiinnitetään blogin luomislomakkeen sisältävälle 
+  //Togglable-komponentille. Nyt siis muuttuja blogFormRef toimii viitteenä komponenttiin.
+  const blogFormRef = useRef()
+
   //Renderöitävä blogiformi ja tähän liittyvä komponentti
   //"src/components/blogform", Create Button käyttöön vain halutessa
   //Ja buttonin nimeksi tulee "new blog" ks. Togglable ja BlogForm komponentit
@@ -197,8 +204,9 @@ const App = () => {
   //komponentti eli LoginForm
   //Togglablen avaavan ja sulkevan tagin sisälle voi sijoittaa lapsiksi mitä 
   //tahansa React-elementtejä
+  //blogFormRef:llä luomislomakkeen sulkeminen luonnin jälkeen
   const blogForm = () => (
-    <Togglable buttonLabel="new blog">
+    <Togglable buttonLabel="new blog" ref={blogFormRef}>
       <BlogForm
         createBlog={addBlog}
       />
