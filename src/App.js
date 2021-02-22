@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import './index.css'
@@ -186,6 +186,10 @@ const App = () => {
     event.preventDefault()
     console.log('UUSI BLOGI ON SYNTYMÄSSÄ')
 
+    //Piilotetaan luomislomake kutsumalla noteFormRef.current.toggleVisibility() 
+    //samalla kun uuden muistiinpanon luominen tapahtuu
+    blogFormRef.current.toggleVisibility()
+
     //Luodaan uusi blogi object
     //token on jo saatavilla "services/blogs.js" filessä, koska token
     //meni sinne local storage effect hookin kautta
@@ -249,7 +253,11 @@ const App = () => {
   //-----------------UUDEN BLOGIN LUOMINEN LOPPUU-------------------------------------------
 */
 
-//----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA ALKAA------------
+  //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA ALKAA------------
+  //useRef hookilla luodaan ref blogFormRef, joka kiinnitetään blogin luomislomakkeen sisältävälle 
+  //Togglable-komponentille. Nyt siis muuttuja blogFormRef toimii viitteenä komponenttiin.
+  const blogFormRef = useRef()
+
   //Renderöitävä blogiformi ja tähän liittyvä komponentti
   //"src/components/blogform", Create Button käyttöön vain halutessa
   //Ja buttonin nimeksi tulee "new blog" ks. Togglable ja BlogForm komponentit
@@ -258,7 +266,7 @@ const App = () => {
   //Togglablen avaavan ja sulkevan tagin sisälle voi sijoittaa lapsiksi mitä 
   //tahansa React-elementtejä
   const blogForm = () => (
-    <Togglable buttonLabel="new blog">
+    <Togglable buttonLabel="new blog" ref={blogFormRef}>
       <BlogForm
         addBlog={addBlog}
         newTitle={newTitle}
@@ -270,7 +278,7 @@ const App = () => {
       />
     </Togglable>
   )
-//----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
+  //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
   return (
     <div>
 
