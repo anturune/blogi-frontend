@@ -1,14 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-//Bogin luomisen formi eristetty tänne, omaan komponenttiin
-const BlogForm = ({
-    addBlog,
-    newTitle,
-    handleTitleChange,
-    newAuthor,
-    handleAuthorChange,
-    newUrl,
-    handleUrlChange }) => {
+//Uuden blogiin liittyvät tilankäsittelijät
+const BlogForm = ({ createBlog }) => {
+    const [newTitle, setNewTitle] = useState('')
+    const [newAuthor, setNewAuthor] = useState('')
+    const [newUrl, setNewUrl] = useState('')
+
+    //Hallitsee title kentässä olevat muutokset
+    const handleTitleChange = (event) => {
+        console.log(event.target.value.toLowerCase())
+        setNewTitle(event.target.value)
+    }
+
+    //Hallitsee Author kentässä olevat muutokset
+    const handleAuthorChange = (event) => {
+        console.log(event.target.value.toLowerCase())
+        setNewAuthor(event.target.value)
+    }
+    //Hallitsee url kentässä olevat muutokset
+    const handleUrlChange = (event) => {
+        console.log(event.target.value.toLowerCase())
+        setNewUrl(event.target.value)
+    }
+    //Alla olvassa "onSubmit" -käskyssä viittaus tänne
+    const addBlog = (event) => {
+        event.preventDefault()
+        createBlog({
+            title: newTitle,
+            author: newAuthor,
+            url: newUrl
+        })
+        //Tyhjätään luonnin jälkeen kentät title, author ja Url
+        setNewTitle('')
+        setNewAuthor('')
+        setNewUrl('')
+    }
+
+
     return (
         < div >
             <h2>CREATE NEW BLOG</h2>

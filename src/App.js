@@ -45,12 +45,6 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [addedMessage, setAddedMessage] = useState(null)
 
-  //Uuden blogin luomiseen liittyvien kenttien ylläpitoon
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-
-
   //Effect hook hakemaan kaikki blogit kun sivu ladataan
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -154,47 +148,14 @@ const App = () => {
 
   //-----------------UUDEN BLOGIN LUOMINEN-------------------------------------------
 
-  //Title kentän muutoksien hallintaan
-  const handleTitleChange = (event) => {
-    //Tapahtumaolion kenttä target vastaa kontrolloitua input-kenttää.
-    //event.target.value viittaa inputin syötekentän arvoon
-    console.log(event.target.value.toLowerCase())
-    //Täydennetään uutta titteliä sitä mukaan kuin kenttään kirjoitetaan
-    setNewTitle(event.target.value)
-  }
 
-  //Author kentän muutoksien hallintaan
-  const handleAuthorChange = (event) => {
-    //Tapahtumaolion kenttä target vastaa kontrolloitua input-kenttää.
-    //event.target.value viittaa inputin syötekentän arvoon
-    console.log(event.target.value.toLowerCase())
-    //Täydennetään uutta titteliä sitä mukaan kuin kenttään kirjoitetaan
-    setNewAuthor(event.target.value)
-  }
-  //Url kentän muutoksien hallintaan
-  const handleUrlChange = (event) => {
-    //Tapahtumaolion kenttä target vastaa kontrolloitua input-kenttää.
-    //event.target.value viittaa inputin syötekentän arvoon
-    console.log(event.target.value.toLowerCase())
-    //Täydennetään uutta titteliä sitä mukaan kuin kenttään kirjoitetaan
-    setNewUrl(event.target.value)
-  }
 
-  const addBlog = async (event) => {
+  const addBlog = async (blogObject) => {
     //Estää lomakkeen lähetyksen oletusarvoisen toiminnan, 
     //joka aiheuttaisi mm. sivun uudelleenlatautumisen. 
-    event.preventDefault()
+    //event.preventDefault()
     console.log('UUSI BLOGI ON SYNTYMÄSSÄ')
 
-    //Luodaan uusi blogi object
-    //token on jo saatavilla "services/blogs.js" filessä, koska token
-    //meni sinne local storage effect hookin kautta
-
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
 
     //Viedään käyttäjän token "services/blogs" fileen, jossa uuden blogin
     blogService.setToken(user.token)
@@ -222,34 +183,13 @@ const App = () => {
         setErrorMessage(null)
       }, 5000)
     }
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
-  }
-  /*
-  //Uuden blogin luomiseen renderöity formi
-  const blogForm = () => (
-    < div >
-      <h2>CREATE NEW</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          Title: <input value={newTitle} onChange={handleTitleChange} />
-        </div>
-        <div>
-          Author: <input value={newAuthor} onChange={handleAuthorChange} />
-        </div>
-        <div>
-          Url: <input value={newUrl} onChange={handleUrlChange} />
-        </div>
-        <br></br>
-        <button type="submit">create</button>
-      </form>
-    </div >
-  )
-  //-----------------UUDEN BLOGIN LUOMINEN LOPPUU-------------------------------------------
-*/
 
-//----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA ALKAA------------
+  }
+  
+  //-----------------UUDEN BLOGIN LUOMINEN LOPPUU-------------------------------------------
+
+
+  //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA ALKAA------------
   //Renderöitävä blogiformi ja tähän liittyvä komponentti
   //"src/components/blogform", Create Button käyttöön vain halutessa
   //Ja buttonin nimeksi tulee "new blog" ks. Togglable ja BlogForm komponentit
@@ -260,17 +200,11 @@ const App = () => {
   const blogForm = () => (
     <Togglable buttonLabel="new blog">
       <BlogForm
-        addBlog={addBlog}
-        newTitle={newTitle}
-        handleTitleChange={handleTitleChange}
-        newAuthor={newAuthor}
-        handleAuthorChange={handleAuthorChange}
-        newUrl={newUrl}
-        handleUrlChange={handleUrlChange}
+        createBlog={addBlog}
       />
     </Togglable>
   )
-//----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
+  //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
   return (
     <div>
 
