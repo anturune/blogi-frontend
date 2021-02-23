@@ -24,8 +24,7 @@ const BlogForm = ({ createBlog }) => {
     }
     //Alla olvassa "onSubmit" -käskyssä viittaus tänne
     const addBlog = (event) => {
-
-       
+ 
         event.preventDefault()
         createBlog({
             title: newTitle,

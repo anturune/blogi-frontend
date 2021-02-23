@@ -206,12 +206,17 @@ const App = () => {
   //tahansa React-elementtejä
   //blogFormRef:llä luomislomakkeen sulkeminen luonnin jälkeen
   const blogForm = () => (
-    <Togglable buttonLabel="new blog" ref={blogFormRef}>
-      <BlogForm
-        createBlog={addBlog}
-      />
+    <Togglable buttonLabel="new blog" hideLabel="cancel" ref={blogFormRef}>
+      <BlogForm createBlog={addBlog} />
     </Togglable>
   )
+
+  //Blogien renderöintiin. "components/Blog.js" renderöidään show ja hide napit
+  //joilla saa valittua mitä blogista näytetään
+  const showHide = () => (
+    blogs.filter(blog => blog.user.username === user.username).map(blog =>
+      <Blog key={blog.id} blog={blog} />
+    ))
   //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
   return (
     <div>
@@ -225,8 +230,8 @@ const App = () => {
           <p>{user.name} logged in {logoutForm()}</p>
           {blogForm()}
           <h2>YOUR BLOGS</h2>
-          {blogs.filter(blog => blog.user.username === user.username).map(blog =>
-            <Blog key={blog.id} blog={blog} />)}
+          {showHide()}
+
         </div>
       }
     </div>
