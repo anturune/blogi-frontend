@@ -190,11 +190,11 @@ const App = () => {
 
   //-----------------LIKETYKSEN LISÄÄMINEN ALKAA-------------------------------------------
 
-  const updateBlog = async (blogObject,id) => {
+  const updateBlog = async (blogObject, id) => {
     //Estää lomakkeen lähetyksen oletusarvoisen toiminnan, 
     //joka aiheuttaisi mm. sivun uudelleenlatautumisen. 
     //event.preventDefault()
-    console.log('UUSI BLOGI ON PÄIVITTYMÄSSÄ JA SEN ID',id)
+    console.log('UUSI BLOGI ON PÄIVITTYMÄSSÄ JA SEN ID', id)
 
     /*
     //Piilotetaan luomislomake kutsumalla noteFormRef.current.toggleVisibility() 
@@ -206,7 +206,7 @@ const App = () => {
 */
     try {
       //Luodaan blogi kantaan HUOM! async/await
-      await blogService.updateBlog(blogObject,id)
+      await blogService.updateBlog(blogObject, id)
 
       //Haetaan kaikki blogit kannasta uuden lisäyksen jälkeen
       //HUOM! async/await
@@ -252,12 +252,22 @@ const App = () => {
     </Togglable>
   )
 
+  //----------------BLOGIEN SORTTAAMINEN TESTI ALKAA------------
+  //Sorttaamisen testaamiseen siten, että eniten tykkäyksiä ensin
+  const mappedBlogs = () => {
+    blogs.filter(blog => blog.user.username === user.username)
+      .sort((a, b) => a.likes < b.likes ? 1 : -1)
+      .map(blog => console.log(blog))
+  }
+  //----------------BLOGIEN SORTTAAMINEN TESTI LOPPUU------------
   //Blogien renderöintiin. "components/Blog.js" renderöidään show ja hide napit
   //joilla saa valittua mitä blogista näytetään
+  //Sekä sorttaus niin, että eniten tykkäyksiä saanut blogi näytetään ensiksi
   const showHide = () => (
-    blogs.filter(blog => blog.user.username === user.username).map(blog =>
-      <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
-    ))
+    blogs.filter(blog => blog.user.username === user.username)
+      .sort((a, b) => a.likes < b.likes ? 1 : -1)
+      .map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+      ))
   //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
   return (
     <div>
@@ -272,6 +282,7 @@ const App = () => {
           {blogForm()}
           <h2>YOUR BLOGS</h2>
           {showHide()}
+          {mappedBlogs()}
 
         </div>
       }
