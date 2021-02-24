@@ -147,9 +147,6 @@ const App = () => {
   //----------------------- LOGOUT JA LOGIN LOPPUU-----------------------------------
 
   //-----------------UUDEN BLOGIN LUOMINEN-------------------------------------------
-
-
-
   const addBlog = async (blogObject) => {
     //Estää lomakkeen lähetyksen oletusarvoisen toiminnan, 
     //joka aiheuttaisi mm. sivun uudelleenlatautumisen. 
@@ -191,6 +188,50 @@ const App = () => {
 
   //-----------------UUDEN BLOGIN LUOMINEN LOPPUU-------------------------------------------
 
+  //-----------------LIKETYKSEN LISÄÄMINEN ALKAA-------------------------------------------
+
+  const updateBlog = async (blogObject,id) => {
+    //Estää lomakkeen lähetyksen oletusarvoisen toiminnan, 
+    //joka aiheuttaisi mm. sivun uudelleenlatautumisen. 
+    //event.preventDefault()
+    console.log('UUSI BLOGI ON PÄIVITTYMÄSSÄ JA SEN ID',id)
+
+    /*
+    //Piilotetaan luomislomake kutsumalla noteFormRef.current.toggleVisibility() 
+    //samalla kun uuden muistiinpanon luominen tapahtuu
+    blogFormRef.current.toggleVisibility()
+
+    //Viedään käyttäjän token "services/blogs" fileen, jossa uuden blogin
+    blogService.setToken(user.token)
+*/
+    try {
+      //Luodaan blogi kantaan HUOM! async/await
+      await blogService.updateBlog(blogObject,id)
+
+      //Haetaan kaikki blogit kannasta uuden lisäyksen jälkeen
+      //HUOM! async/await
+      const blogsAfterUpdate = await blogService.getAll()
+
+      //Päivitetään näytettävää blogilistaa sis. uuden blogin
+      setBlogs(blogsAfterUpdate.map(blog => blog))
+
+      //Onnistuneesta lisäyksestä selaimeen viesti 5 sec
+      setAddedMessage('A blog ' + `${blogObject.title}` + ' by ' + `${user.name}` + ' successfully updated')
+      setTimeout(() => {
+        setAddedMessage(null)
+      }, 5000)
+      //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
+    } catch (exception) {
+      setErrorMessage('Jokin meni pieleen')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+
+  }
+
+  //-----------------LIKETYKSEN LISÄÄMINEN LOPPUU-------------------------------------------
+
 
   //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA ALKAA------------
   //useRef hookilla luodaan ref blogFormRef, joka kiinnitetään blogin luomislomakkeen sisältävälle 
@@ -215,7 +256,7 @@ const App = () => {
   //joilla saa valittua mitä blogista näytetään
   const showHide = () => (
     blogs.filter(blog => blog.user.username === user.username).map(blog =>
-      <Blog key={blog.id} blog={blog} />
+      <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
     ))
   //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
   return (

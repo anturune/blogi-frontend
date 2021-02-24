@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 
 
-
-const Blog = ({ blog }) => {
+//Sisältää liketysten päivityksen ja päivitys tietokantaan
+//tehdään updateBlog komponentilla, joka tuodaan tähän "updateBlog:lla"
+//HUOM! App.js filessä olevassa updateBlog komponentissa on mukana id:n vastaanottokin
+const Blog = ({ blog, updateBlog }) => {
   //Blogin tila, joka määrittelee kumpi return palautetaan
   const [view, setView] = useState(false)
 
-  //Tämä muuttaa blogin tilaa eli mitä näytetään
+  //Tämä muuttaa blogin tilaa eli määärää sen kumpa return palautetaan
   const toggleVisibility = () => {
     if (!view) {
       setView(true)
@@ -16,9 +18,22 @@ const Blog = ({ blog }) => {
     }
   }
 
+  //-------------------LIKETYSTEN PÄIVITTÄMINEN ALKAA--------------------------
+  //Tässä käytetään parametria "updateBlog", jonka toiminnallisuus on App.js filessä
+  //HUOM! App.js:ssä oleva "updateBlog" komponentti sisältää myös blogin ID:n syöttömahdollisuuden
+  //ja se on tässä toisena parametrina. Eka on "blogobjectin sisältö" ja toinen on "blogin ID"
   const likes = () => {
-    console.log('lisaa liketysta')
+    updateBlog({
+      user: blog.user.id,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1
+    }, blog.id)
+
+    console.log('BLOGIN ID', blog.id)
   }
+  //-------------------LIKETYSTEN PÄIVITTÄMINEN LOPPUU---------------------------
 
   //Ulkoasun muokkaukseen. Kehä ympärille jokaiselle blogille
   const blogStyle = {
@@ -41,6 +56,7 @@ const Blog = ({ blog }) => {
     )
   }
   //Näytetään kaikki blogin tiedot, jos on painettu view nappia
+  //Hide napilla sitten uudelleen piiloon
   else if (view) {
     return (
       <div style={blogStyle}>
@@ -52,7 +68,7 @@ const Blog = ({ blog }) => {
           {blog.url}
           <br></br>
           likes: {blog.likes}
-          <button value={blog} onClick={likes}>like</button>
+          <button onClick={likes}>like</button>
           <br></br>
           Author: {blog.author}
         </div>
