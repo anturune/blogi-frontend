@@ -1,4 +1,5 @@
 import React, { useState, useImperativeHandle } from 'react'
+import PropTypes from 'prop-types'
 
 //Komponentin luova funktio on kääritty funktiokutsun forwardRef sisälle, 
 //näin komponentti pääsee käsiksi sille määriteltyyn refiin, tässä halutaan
@@ -8,8 +9,6 @@ const Togglable = React.forwardRef((props, ref) => {
 
     const hideWhenVisible = { display: visible ? 'none' : '' }
     const showWhenVisible = { display: visible ? '' : 'none' }
-
-
     const toggleVisibility = () => {
         setVisible(!visible)
     }
@@ -22,7 +21,13 @@ const Togglable = React.forwardRef((props, ref) => {
             toggleVisibility
         }
     })
-
+    //Tällä määrätään, että alla "return koodissa olevissa "props":eissa on String tyyppinen arvo
+    //eli buttoneilla on label
+    Togglable.propTypes = {
+        buttonLabel: PropTypes.string.isRequired
+    }
+    //Tällä saadaan komponentille nimi, muutoin linttaus ".eslintrc.js" antaa paljon virheitä
+    Togglable.displayName = 'Togglable'
     //Cancel button ja new blog buttonit, "new blog" buttonin labeliin otetaan
     //propseina "App.js filestä" "blogForm" käsittelijästä
     // props.children, jonka avulla koodi viittaa komponentin lapsiin, eli avaavan ja 

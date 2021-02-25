@@ -172,7 +172,7 @@ const App = () => {
       setBlogs(blogsAfterAdd.map(blog => blog))
 
       //Onnistuneesta lisäyksestä selaimeen viesti 5 sec
-      setAddedMessage('A new blog ' + `${blogObject.title}` + ' by ' + `${user.name}` + ' successfully added')
+      setAddedMessage(`A new blog  ${blogObject.title}  ${user.name} successfully added`)
       setTimeout(() => {
         setAddedMessage(null)
       }, 5000)
@@ -216,7 +216,7 @@ const App = () => {
       setBlogs(blogsAfterUpdate.map(blog => blog))
 
       //Onnistuneesta lisäyksestä selaimeen viesti 5 sec
-      setAddedMessage('A blog ' + `${blogObject.title}` + ' by ' + `${user.name}` + ' successfully updated')
+      setAddedMessage(`A blog ${blogObject.title} by  ${user.name}  successfully updated`)
       setTimeout(() => {
         setAddedMessage(null)
       }, 5000)
@@ -243,14 +243,11 @@ const App = () => {
       try {
         //Luodaan blogi kantaan HUOM! async/await
         await blogService.deleteBlog(blogToBeDeleted.id)
-
         //Haetaan kaikki blogit kannasta deletoinnin jälkeen
         //HUOM! async/await
         const blogsAfterDelete = await blogService.getAll()
-
         //Päivitetään näytettävää blogilistaa ei sis. deletoitua blogia
         setBlogs(blogsAfterDelete.map(blog => blog))
-
         //Onnistuneesta deletoinnista selaimeen viesti 5 sec
         setAddedMessage('Blog Successfully deleted!')
         setTimeout(() => {
