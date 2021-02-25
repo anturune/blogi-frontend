@@ -25,11 +25,22 @@ const createBlog = async newObject => {
   const response = await axios.post(baseUrl, newObject, config)
   return response.data
 }
-
+//Blogin päivittäminen
 const updateBlog = async (newObject, id) => {
   const response = await axios.put(`${baseUrl}/${id}`, newObject)
   return response.data
 }
 
+//Blogin deletointi
+const deleteBlog = async (id) => {
+  //Loggautuneen käyttäjän Token lisättävä delete actionin headeriin
+  const config = {
+    headers: { Authorization: token },
+  }
+  const response = await axios.delete(`${baseUrl}/${id}`, config)
+  return response.data
+}
 
-export default { getAll, createBlog, updateBlog, setToken }
+
+
+export default { getAll, createBlog, updateBlog, deleteBlog, setToken }

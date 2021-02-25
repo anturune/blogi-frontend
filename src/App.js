@@ -232,6 +232,45 @@ const App = () => {
 
   //-----------------LIKETYKSEN LISÄÄMINEN LOPPUU-------------------------------------------
 
+  //-----------------BLOGIN POISTAMINEN ALKAA-------------------------------------------
+  const deleteBlog = async (blogToBeDeleted) => {
+    console.log('BLOG TO BE DELETED ', blogToBeDeleted)
+    //Viedään käyttäjän token "services/blogs" fileen, jossa blogin
+    blogService.setToken(user.token)
+
+    //Blogin poistamine jos hyväksyy pop upissa "OK" buttonilla
+    if (window.confirm("Remove blog " + blogToBeDeleted.title + " by " + blogToBeDeleted.author + "?")) {
+      try {
+        //Luodaan blogi kantaan HUOM! async/await
+        await blogService.deleteBlog(blogToBeDeleted.id)
+
+        //Haetaan kaikki blogit kannasta deletoinnin jälkeen
+        //HUOM! async/await
+        const blogsAfterDelete = await blogService.getAll()
+
+        //Päivitetään näytettävää blogilistaa ei sis. deletoitua blogia
+        setBlogs(blogsAfterDelete.map(blog => blog))
+
+        //Onnistuneesta deletoinnista selaimeen viesti 5 sec
+        setAddedMessage('Blog Successfully deleted!')
+        setTimeout(() => {
+          setAddedMessage(null)
+        }, 5000)
+
+        //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
+      } catch (exception) {
+        setErrorMessage('Jokin meni pieleen')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+
+      }
+    }
+
+  }
+
+  //-----------------BLOGIN POISTAMINEN LOPPUU-------------------------------------------
+
 
   //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA ALKAA------------
   //useRef hookilla luodaan ref blogFormRef, joka kiinnitetään blogin luomislomakkeen sisältävälle 
@@ -252,21 +291,16 @@ const App = () => {
     </Togglable>
   )
 
-  //----------------BLOGIEN SORTTAAMINEN TESTI ALKAA------------
-  //Sorttaamisen testaamiseen siten, että eniten tykkäyksiä ensin
-  const mappedBlogs = () => {
-    blogs.filter(blog => blog.user.username === user.username)
-      .sort((a, b) => a.likes < b.likes ? 1 : -1)
-      .map(blog => console.log(blog))
-  }
-  //----------------BLOGIEN SORTTAAMINEN TESTI LOPPUU------------
-  //Blogien renderöintiin. "components/Blog.js" renderöidään show ja hide napit
+
+  //Blogien renderöintiin. "src/components/Blog.js" renderöidään show ja hide napit
   //joilla saa valittua mitä blogista näytetään
   //Sekä sorttaus niin, että eniten tykkäyksiä saanut blogi näytetään ensiksi
+  //HUOM! Tässä näytetään kaikki blogit, ei vain kirjautuneen käyttäjän
+  //Sisältää myös "deleteBlog" toiminnallisuuden lähettämisen "src/components/Blog.js" fileen
   const showHide = () => (
-    blogs.filter(blog => blog.user.username === user.username)
+    blogs
       .sort((a, b) => a.likes < b.likes ? 1 : -1)
-      .map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+      .map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
       ))
   //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
   return (
@@ -282,8 +316,6 @@ const App = () => {
           {blogForm()}
           <h2>YOUR BLOGS</h2>
           {showHide()}
-          {mappedBlogs()}
-
         </div>
       }
     </div>

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 //Sisältää liketysten päivityksen ja päivitys tietokantaan
 //tehdään updateBlog komponentilla, joka tuodaan tähän "updateBlog:lla"
 //HUOM! App.js filessä olevassa updateBlog komponentissa on mukana id:n vastaanottokin
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
   //Blogin tila, joka määrittelee kumpi return palautetaan
   const [view, setView] = useState(false)
 
@@ -35,6 +35,14 @@ const Blog = ({ blog, updateBlog }) => {
   }
   //-------------------LIKETYSTEN PÄIVITTÄMINEN LOPPUU---------------------------
 
+  //-------------------BLOGIN DELETOINTI ALKAA-----------------------------------
+  //Blogin deletointiin riittää pelkkä ID:n lähettäminen "src/services/blogs.js" fileen
+  const blogDeletion = () => {
+    deleteBlog(blog)
+  }
+  //-------------------BLOGIN DELETOINTI LOPPUU------------------------------------
+
+
   //Ulkoasun muokkaukseen. Kehä ympärille jokaiselle blogille
   const blogStyle = {
     paddingTop: 10,
@@ -57,6 +65,26 @@ const Blog = ({ blog, updateBlog }) => {
   }
   //Näytetään kaikki blogin tiedot, jos on painettu view nappia
   //Hide napilla sitten uudelleen piiloon
+
+  else if (view && blog.user.username !== user.username) {
+    return (
+      <div style={blogStyle}>
+        <div>
+          {blog.title} {blog.author}
+          <button onClick={toggleVisibility}>hide</button>
+        </div>
+        <div>
+          {blog.url}
+          <br></br>
+          likes: {blog.likes}
+          <button onClick={likes}>like</button>
+          <br></br>
+          Author: {blog.author}
+        </div>
+      </div>
+    )
+  }
+  //HUOM! Delete nappi lisätty ja näkyviin vain kun blogin luoja
   else if (view) {
     return (
       <div style={blogStyle}>
@@ -71,6 +99,9 @@ const Blog = ({ blog, updateBlog }) => {
           <button onClick={likes}>like</button>
           <br></br>
           Author: {blog.author}
+        </div>
+        <div>
+          <button onClick={blogDeletion}>delete</button>
         </div>
       </div>
     )
