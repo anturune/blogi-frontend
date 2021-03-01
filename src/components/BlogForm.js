@@ -8,24 +8,24 @@ const BlogForm = ({ createBlog }) => {
 
     //Hallitsee title kentässä olevat muutokset
     const handleTitleChange = (event) => {
-        console.log(event.target.value.toLowerCase())
+        //console.log('HandleTitleChange', event.target.value.toLowerCase())
         setNewTitle(event.target.value)
     }
 
     //Hallitsee Author kentässä olevat muutokset
     const handleAuthorChange = (event) => {
-        console.log(event.target.value.toLowerCase())
+        //console.log('HandleAuthorChange', event.target.value.toLowerCase())
         setNewAuthor(event.target.value)
     }
     //Hallitsee url kentässä olevat muutokset
     const handleUrlChange = (event) => {
-        console.log(event.target.value.toLowerCase())
+        //console.log('HandleURLChange', event.target.value.toLowerCase())
         setNewUrl(event.target.value)
     }
     //Alla olvassa "onSubmit" -käskyssä viittaus tänne
     const addBlog = (event) => {
- 
         event.preventDefault()
+        //console.log('TULIKO TÄNNE')
         createBlog({
             title: newTitle,
             author: newAuthor,
@@ -43,13 +43,13 @@ const BlogForm = ({ createBlog }) => {
             <h2>CREATE NEW BLOG</h2>
             <form onSubmit={addBlog}>
                 <div>
-                    Title: <input value={newTitle} onChange={handleTitleChange} />
+                    Title: <input id='title' value={newTitle} onChange={handleTitleChange} />
                 </div>
                 <div>
-                    Author: <input value={newAuthor} onChange={handleAuthorChange} />
+                    Author: <input id='author' value={newAuthor} onChange={handleAuthorChange} />
                 </div>
                 <div>
-                    Url: <input value={newUrl} onChange={handleUrlChange} />
+                    Url: <input id='url' value={newUrl} onChange={handleUrlChange} />
                 </div>
                 <br></br>
                 <button type="submit">create</button>

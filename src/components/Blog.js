@@ -31,7 +31,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
       likes: blog.likes + 1
     }, blog.id)
 
-    console.log('BLOGIN ID', blog.id)
+    //console.log('BLOGIN ID', blog.id)
   }
   //-------------------LIKETYSTEN PÄIVITTÄMINEN LOPPUU---------------------------
 
@@ -57,12 +57,14 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
     return (
       <div style={blogStyle}>
         <div>
-          {blog.title}
+          {blog.title} {blog.author}
           <button onClick={toggleVisibility}>view</button>
         </div>
       </div>
     )
   }
+
+
   //Näytetään kaikki blogin tiedot, jos on painettu view nappia
   //Hide napilla sitten uudelleen piiloon
 
@@ -84,6 +86,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
       </div>
     )
   }
+
   //HUOM! Delete nappi lisätty ja näkyviin vain kun blogin luoja
   else if (view) {
     return (
